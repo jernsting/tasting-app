@@ -102,6 +102,11 @@ public class GreetingController {
         player.setUsername(registration.getUsername());
         player.setName(registration.getDisplayname());
         player.setPassword(passwordEncoder.encode(registration.getPassword()));
+
+        if (playerDao.count() == 0) {
+            player.setAdmin(true);
+        }
+
         playerDao.save(player);
 
         return "redirect:/login";

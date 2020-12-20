@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PlayerDao extends JpaRepository<Player, Long> {
     List<Player> findByUsername(String username);
+    List<Player> findTop5ByOrderByCreationDateDesc();
 }

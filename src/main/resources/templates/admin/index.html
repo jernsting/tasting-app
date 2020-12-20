@@ -3,12 +3,79 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/default.html}">
 <head>
-    <title>Home</title>
+    <title>Dashboard</title>
 </head>
 <body>
 
 <section layout:fragment="custom-content">
-    <h1>Welcome to the admin area....</h1>
+    <div class="row">
+        <div class="col">
+            <h1>Dasboard</h1>
+            <div class="alert alert-danger" th:each="message : ${messages}">
+                <span th:text="${message}" class="ui error message"> </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <div class="card">
+                <h5 class="card-header">Users</h5>
+                <div class="card-body">
+                    <p class="card-text" th:text="${playerCount}">5</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <h5 class="card-header">Tastings</h5>
+                <div class="card-body">
+                    <p class="card-text" th:text="${tastingCount}">5</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card">
+                <h5 class="card-header">Products</h5>
+                <div class="card-body">
+                    <p class="card-text" th:text="${productCount}">5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Neuste Nutzer</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Nutzername</th>
+                            <th scope="col">Anmeldedatum</th>
+                            <th scope="col">Credits</th>
+                            <th scope="col">Tags</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${newestUsers.empty}">
+                            <td colspan="2">Bisher keine Nutzer</td>
+                            <td></td>
+                        </tr>
+                        <tr th:each="player : ${newestUsers}">
+                            <td><a href="#" th:href="@{'/admin/users/'+${player.getId()}+'/edit'}"><span th:text="${player.getName()}"> Title </span></a></td>
+                            <td><span th:text="${player.getCreationDate()}"></span></td>
+                            <td><span th:text="${player.getCredit()}"></span></td>
+                            <td><span th:if="${player.isAdmin()}" class="badge badge-danger">ADMIN</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 </body>
 </html>

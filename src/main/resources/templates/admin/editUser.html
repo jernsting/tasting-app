@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>Edit User</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <div class="row">
+        <div class="col">
+            <h1>Edit <span th:text="${player.getName()}"></span></h1>
+        </div>
+    </div>
+
+    <div class="row" th:if="!{!player.isAdmin()}">
+        <div class="col">
+            <p>Promote Admin</p>
+
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

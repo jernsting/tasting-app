@@ -25,10 +25,21 @@ public class Player implements UserDetails {
 
     // Todo: password etc
     private String name;
-    private Integer credit;
+    private Integer credit = 0;
     private String password;
     private String username;
     private Boolean locked = true;
+    private boolean admin = false;
+    private Date creationDate = new Date();
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    @Basic
+    public Date getCreationDate() {
+        return creationDate;
+    }
 
     /**
      * Add a product to the current user
@@ -110,6 +121,14 @@ public class Player implements UserDetails {
         this.products = products;
     }
 
+    @Basic
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 
     /**
      * Get a list of tastings, that a user has hosted
@@ -131,11 +150,11 @@ public class Player implements UserDetails {
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        GrantedAuthority auth = new SimpleGrantedAuthority("USER");
+        GrantedAuthority auth = new SimpleGrantedAuthority("ROLE_USER");
         grantedAuthorities.add(auth);
 
-        if (this.username.equals("jernsting")) {
-            GrantedAuthority authority = new SimpleGrantedAuthority("ADMIN");
+        if (this.isAdmin()) {
+            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_ADMIN");
             grantedAuthorities.add(authority);
         }
 

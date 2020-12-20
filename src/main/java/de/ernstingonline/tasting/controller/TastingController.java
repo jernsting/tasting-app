@@ -67,7 +67,7 @@ public class TastingController {
             atts.addFlashAttribute("messages", error_msg);
             return "redirect:/tasting/invite";
         }
-        if (optionalTasting.isEmpty()) {
+        if (!optionalTasting.isPresent()) {
             atts.addFlashAttribute("messages", error_msg);
             return "redirect:/tasting/invite";
         }
@@ -191,12 +191,21 @@ public class TastingController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public String saveTasting(@Valid @ModelAttribute("tasting") TastingValidator tasting,
                            BindingResult result,
+                           RedirectAttributes atts,
                            Model model,
                            Principal principal) {
         if (result.hasErrors())
             return "tasting/newTasting";
 
         Player host = playerDao.findByUsername(principal.getName()).get(0);
+
+        if (host.getCredit() <= 0 && !host.isAdmin()) {
+            atts.addFlashAttribute("messages", "Kein Guthaben");
+            return "redirect:/";
+        }
+
+        if (!host.isAdmin())
+            host.setCredit(host.getCredit() - 1);
 
         Tasting dbTasting = new Tasting();
         Date date1;
@@ -238,7 +247,7 @@ public class TastingController {
     private Tasting saveGetTasting(Principal principal, String id) {
         Player user = playerDao.findByUsername(principal.getName()).get(0);
         Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(id));
-        if (optionalTasting.isEmpty())
+        if (!optionalTasting.isPresent())
             throw new TastingNotFoundException();
         Tasting tasting = optionalTasting.get();
 
