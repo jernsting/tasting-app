@@ -102,7 +102,7 @@ public class TastingController {
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
                     if (product.getPlayer() == player) {
-                        product.setRevealed(true);
+                        product.setRevealed(!product.isRevealed());
                         productDao.save(product);
                     }
                 }

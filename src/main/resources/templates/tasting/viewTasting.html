@@ -41,7 +41,8 @@
                             <td><span th:text="${product.getId()}"> Title </span></td>
                             <td>
                                 <span th:if="${product.isRevealed()}" th:text="${product.getName()}"></span>
-                                <span th:if="${product.getPlayer.getName().equals(#authentication.getName())}"
+                                <span th:if="${product.getPlayer.getName().equals(#authentication.getName()) && product.isRevealed()}" class="badge badge-danger">Freigegeben</span>
+                                <span th:if="${product.getPlayer.getName().equals(#authentication.getName()) && !product.isRevealed()}"
                                       th:text="${product.getName()}"></span>
                             </td>
                             <td>
