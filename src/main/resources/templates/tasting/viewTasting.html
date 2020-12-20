@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>Tasting</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <div class="row">
+        <div class="col">
+            <h1>Tasting Name: <span th:text="${tasting.getTitle()}"></span></h1>
+            <small>Einladungscode: <span th:text="${tasting.getId()}+'$'+${tasting.getInviteCode()}"></span></small>
+        </div>
+    </div>
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Proben</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">QR-Code</th>
+                            <th scope="col">Kennung</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Optionen</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${tasting.getProducts().empty}">
+                            <td colspan="2">Bisher keine Proben</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr th:each="product : ${tasting.getProducts()}">
+                            <td><img th:src="@{'/codes/product/'+${product.getId()}}" /></td>
+                            <td><span th:text="${product.getId()}"> Title </span></td>
+                            <td>
+                                <span th:if="${product.isRevealed()}" th:text="${product.getName()}"></span>
+                                <span th:if="${product.getPlayer.getName().equals(#authentication.getName())}"
+                                      th:text="${product.getName()}"></span>
+                            </td>
+                            <td>
+                                <span th:switch="${product.isRevealed()}">
+                                    <span th:case="false">
+                                        <a th:if="${username.equals(product.getPlayer().getUsername())}"
+                                           href="#"
+                                           th:href="@{'/tasting/'+${tasting.getId()}+'/reveal/'+${product.getId()}}"
+                                           class="btn btn-outline-warning">Freigeben</a>
+                                    </span>
+                                    <span th:case="true">
+                                        <a th:if="${username.equals(product.getPlayer().getUsername())}"
+                                           href="#"
+                                           th:href="@{'/tasting/'+${tasting.getId()}+'/reveal/'+${product.getId()}}"
+                                           class="btn btn-outline-warning">Verdecken</a>
+                                    </span>
+                                    <a th:if="${username.equals(product.getPlayer().getUsername())}"
+                                       href="#"
+                                       th:href="@{'/tasting/'+${tasting.getId()}+'/delete/'+${product.getId()}}"
+                                       class="btn btn-outline-danger">Löschen</a>
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Probe hinzufügen</h5>
+                <div class="card-body">
+                    <form th:action="@{'/tasting/'+${tasting.getId()}+'/view'}" method="post" th:object="${product}">
+                        <div class="alert alert-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                            Dummy_Fehlermeldung
+                        </div>
+                        <div class="form-group">
+                            <label for="productname">Name</label>
+                            <input id="productname" th:field="*{name}" class="form-control" type="text" name="productname"/>
+                        </div>
+                        <div><input type="submit" class="btn btn-primary" value="Probe hinzufügen"/></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Teilnehmer</h5>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Nutzername</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${tasting.getPlayers().empty}">
+                            <td colspan="2">Bisher keine Teilnehmer</td>
+                            <td></td>
+                        </tr>
+                        <tr th:each="player : ${tasting.getPlayers()}">
+                            <td><span th:text="${player.getName()}"> Title </span></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</body>
+</html>

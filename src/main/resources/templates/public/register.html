@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>Registrierung</title>
+</head>
+<body>
+<section layout:fragment="custom-content">
+    <h1>Registrierung</h1>
+
+    <form th:action="@{/register}" method="post" th:object="${registration}">
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+            Name fehlerhaft (Leer oder bereits vergeben)
+        </div>
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('displayname')}" th:errors="*{displayname}">
+            Anzeigename fehlerhaft (leer)
+        </div>
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+            Passwörter stimmen nicht überein
+        </div>
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}">
+            Passwörter stimmen nicht überein
+        </div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" th:field="*{username}" class="form-control" type="text" name="username"/>
+        </div>
+        <div class="form-group">
+            <label for="displayname">Anzeigename</label>
+            <input id="displayname" th:field="*{displayname}" class="form-control" type="text" name="displayname">
+        </div>
+        <div class="form-group">
+            <label for="password">Passwort</label>
+            <input class="form-control" th:field="*{password}" id="password" type="password" name="password"/>
+        </div>
+        <div class="form-group">
+            <label for="password2">Password wiederholen</label>
+            <input class="form-control" id="password2" th:field="*{password2}" type="password" name="password2"/>
+        </div>
+        <div><input type="submit" class="btn btn-primary" value="Register"/></div>
+    </form>
+</section>
+</body>
+</html>

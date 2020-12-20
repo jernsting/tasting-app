@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>Tasting List</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Datum</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${tastings.empty}">
+                <td colspan="2">Bisher keine Tastings verfügbar </td>
+                <td></td>
+            </tr>
+            <tr th:each="tasting : ${tastings}">
+                <td><a th:href="@{'/tasting/'+${tasting.getId()}+'/view'}"><span th:text="${tasting.getTitle()}"> Title </span></a></td>
+                <td><span th:text="${tasting.getDate().toLocaleString()}"></span></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

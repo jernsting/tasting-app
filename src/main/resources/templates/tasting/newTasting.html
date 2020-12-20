@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>New Tasting</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <h1>Neues Tasting anlegen</h1>
+    <form th:action="@{/tasting/new}" method="post" th:object="${tasting}">
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+            Dummy_Fehlermeldung
+        </div>
+        <div class="alert alert-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">
+            Dummy_Fehlermeldung
+        </div>
+        <div class="form-group">
+            <label for="username">Name</label>
+            <input id="username" th:field="*{name}" class="form-control" type="text" name="username"/>
+        </div>
+        <div class="form-group">
+            <label for="date">Datum</label>
+            <input class="form-control" id="date" th:field="*{date}" type="text" name="date"/>
+        </div>
+        <div><input type="submit" class="btn btn-primary" value="Tasting anlegen"/></div>
+    </form>
+</section>
+</body>
+</html>
