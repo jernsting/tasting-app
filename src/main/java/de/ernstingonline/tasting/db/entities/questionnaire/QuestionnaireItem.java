@@ -13,6 +13,7 @@ public class QuestionnaireItem {
     private Long id;
 
     private String question;
+    private Long position;
 
     @ManyToOne()
     @JoinColumn(name = "questionnaire_id")
@@ -23,6 +24,15 @@ public class QuestionnaireItem {
 
     @Enumerated(EnumType.ORDINAL)
     private QuestionType type;
+
+    @Basic
+    public Long getPosition() {
+        return position;
+    }
+
+    public void setPosition(Long position) {
+        this.position = position;
+    }
 
     public Long getId() {return id;}
 

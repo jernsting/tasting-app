@@ -13,7 +13,6 @@ import de.ernstingonline.tasting.validators.InviteValidator;
 import de.ernstingonline.tasting.validators.ProductValidator;
 import de.ernstingonline.tasting.validators.TastingValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.text.ParseException;
@@ -52,7 +50,6 @@ public class TastingController {
     @RequestMapping(value = "/invite", method = RequestMethod.POST)
     public String acceptInvite(@Valid @ModelAttribute("invite") InviteValidator invite,
                                BindingResult result,
-                               Model model,
                                RedirectAttributes atts,
                                Principal principal) {
         if (result.hasErrors())
@@ -294,7 +291,7 @@ public class TastingController {
         tastingDao.save(dbTasting);
         playerDao.save(host);
 
-        return "redirect:/tasting/list";
+        return "redirect:/tasting/"+dbTasting.getId()+"/view";
     }
 
     @RequestMapping("/list")

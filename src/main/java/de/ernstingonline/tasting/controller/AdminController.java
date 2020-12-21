@@ -2,6 +2,7 @@ package de.ernstingonline.tasting.controller;
 
 import de.ernstingonline.tasting.db.dao.game.PlayerDao;
 import de.ernstingonline.tasting.db.dao.game.TastingDao;
+import de.ernstingonline.tasting.db.dao.questionnaire.QuestionnaireDao;
 import de.ernstingonline.tasting.db.dao.samples.ProductDao;
 import de.ernstingonline.tasting.db.entities.game.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,15 @@ public class AdminController {
     private TastingDao tastingDao;
     @Autowired
     private ProductDao productDao;
+    @Autowired
+    private QuestionnaireDao questionnaireDao;
 
     @RequestMapping("/index")
     public String index(Model model) {
         model.addAttribute("playerCount", playerDao.count());
         model.addAttribute("tastingCount", tastingDao.count());
         model.addAttribute("productCount", productDao.count());
+        model.addAttribute("questionnaireCount", questionnaireDao.count());
         model.addAttribute("newestUsers", playerDao.findTop5ByOrderByCreationDateDesc());
         return "admin/index";
     }

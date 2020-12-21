@@ -40,16 +40,19 @@
         </div>
     </div>
 
-    <div class="row additional-spacing" th:if="${tasting.getState().started()}">
-        <div class="col">
-            <div class="card">
-                <h5 class="card-header">Willkommen zum Tasting</h5>
-                <div class="card-body">
-                    <a href="#" th:href="@{'/intasting/'+${tasting.getId()}+'/index'}" class="btn btn-outline-success">Tasting beitreten</a>
+    <div th:if="${false}">
+        <div class="row additional-spacing" th:if="${tasting.getState().started()}">
+            <div class="col">
+                <div class="card">
+                    <h5 class="card-header">Willkommen zum Tasting</h5>
+                    <div class="card-body">
+                        <a href="#" th:href="@{'/intasting/'+${tasting.getId()}+'/index'}" class="btn btn-outline-success">Tasting beitreten</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <div class="row additional-spacing">
         <div class="col">
@@ -90,7 +93,7 @@
                                         <a th:if="${username.equals(product.getPlayer().getUsername())}"
                                            href="#"
                                            th:href="@{'/tasting/'+${tasting.getId()}+'/reveal/'+${product.getId()}}"
-                                           data-toggle="tooltip" data-placement="bottom" title="Freigegebene Produkte sind für alle Teilnehmer sichtbar"
+                                           data-toggle="modal" data-target="#confirm-delete"
                                            class="btn btn-outline-warning">Freigeben</a>
                                     </span>
                                     <span th:case="true">
@@ -164,9 +167,29 @@
     </div>
 
 
+    <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="confirm-delete" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirm-delete-label">Hinweis</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Durch das "Freigeben" wird der Produktname für alle Mitspieler sichtbar. Fortsetzen?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                    <a class="btn btn-primary btn-ok" id="btn-ok">Freigeben</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();
+        $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('#btn-ok').attr('href', $(e.relatedTarget).attr('href'));
         });
     </script>
 </section>

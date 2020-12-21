@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default.html}">
+<head>
+    <title>Fragebögen</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <h1>Vorhandene Fragebögen</h1>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Datum</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${questionnairs.empty}">
+            <td colspan="2">Bisher keine Fragebögen vorhanden</td>
+            <td></td>
+        </tr>
+        <tr th:each="questionair : ${questionnairs}">
+            <td><a th:href="@{'/question/'+${questionair.getId()}+'/view'}"><span th:text="${questionair.getTitle()}"> Title </span></a></td>
+            <td><span th:text="${questionair.getCreationDate().toLocaleString()}"></span></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

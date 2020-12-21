@@ -18,7 +18,7 @@
     </div>
 
     <div class="row">
-        <div class="col-4">
+        <div class="col-3">
             <div class="card">
                 <h5 class="card-header">Users</h5>
                 <div class="card-body">
@@ -26,7 +26,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <div class="card">
                 <h5 class="card-header">Tastings</h5>
                 <div class="card-body">
@@ -34,11 +34,19 @@
                 </div>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <div class="card">
                 <h5 class="card-header">Products</h5>
                 <div class="card-body">
                     <p class="card-text" th:text="${productCount}">5</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="card">
+                <h5 class="card-header">Fragebögen</h5>
+                <div class="card-body">
+                    <p class="card-text" th:text="${questionnaireCount}">5</p>
                 </div>
             </div>
         </div>
