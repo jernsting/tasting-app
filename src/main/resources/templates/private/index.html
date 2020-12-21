@@ -16,26 +16,30 @@
                 <span th:text="${message}" class="ui error message"> </span>
             </div>
             <p>
-                Hallo <span sec:authentication="name">Bob</span>,<br/>
-                deine aktuellen Rollen: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+                Hallo <span th:text="${player.getName()}">Bob</span>,<br/>
+                deine aktueller Kredit: <span th:text="${player.getCredit()}">NONE</span>
             </p>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row additional-spacing">
         <div class="col">
-            <h2>Einladung annehmen</h2>
-            <form th:action="@{/tasting/invite}" method="post" th:object="${invite}">
-                <div class="form-group">
-                    <label for="username">Einladungscode:</label>
-                    <input id="username" th:field="*{invite}" class="form-control" type="text" name="username"/>
+            <div class="card border-success">
+                <h5 class="card-header">Einladung annehmen</h5>
+                <div class="card-body">
+                    <form th:action="@{/tasting/invite}" method="post" th:object="${invite}">
+                        <div class="form-group">
+                            <label for="username">Einladungscode:</label>
+                            <input id="username" th:field="*{invite}" class="form-control" type="text" name="username"/>
+                        </div>
+                        <div><input type="submit" class="btn btn-outline-success" value="Einladung annehmen"/></div>
+                    </form>
                 </div>
-                <div><input type="submit" class="btn btn-outline-success" value="Einladung annehmen"/></div>
-            </form>
+            </div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row additional-spacing">
         <div class="col">
             <h2>Künftige Tastings</h2>
             <table class="table table-striped">

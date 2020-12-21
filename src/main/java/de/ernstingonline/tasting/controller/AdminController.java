@@ -41,7 +41,7 @@ public class AdminController {
                             Model model) {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
         if (!optionalPlayer.isPresent()) {
-            attrs.addFlashAttribute("messages", "User not found");
+            attrs.addFlashAttribute("messages", "User nicht gefunden");
             return "redirect:/admin/index";
         }
 
@@ -51,7 +51,36 @@ public class AdminController {
     }
 
     @RequestMapping("/users/{id}/edit/promote")
-    public String promoteUser(@PathVariable("id") String id) {
-        return "admin/editUser";
+    public String promoteUser(@PathVariable("id") String id,
+                              RedirectAttributes atts) {
+        Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
+
+        if (!optionalPlayer.isPresent()) {
+            atts.addFlashAttribute("messages", "User nicht gefunden");
+            return "redirect:/admin/index";
+        }
+
+        Player player = optionalPlayer.get();
+        player.setAdmin(!player.isAdmin());
+        playerDao.save(player);
+
+        return "redirect:/admin/users/"+id+"/edit";
+    }
+
+    @RequestMapping("/users/{id}/edit/grant")
+    public String grantUser(@PathVariable("id") String id,
+                            RedirectAttributes atts) {
+        Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
+
+        if (!optionalPlayer.isPresent()) {
+            atts.addFlashAttribute("messages", "User nicht gefunden");
+            return "redirect:/admin/index";
+        }
+
+        Player player = optionalPlayer.get();
+        player.setCredit(player.getCredit() + 1);
+        playerDao.save(player);
+
+        return "redirect:/admin/users/"+id+"/edit";
     }
 }

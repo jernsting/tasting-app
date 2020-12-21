@@ -76,6 +76,7 @@ public class GreetingController {
             });
             model.addAttribute("upcoming", upcoming);
             model.addAttribute("invite", new InviteValidator());
+            model.addAttribute("player", player);
             return "private/index";
         }
     }

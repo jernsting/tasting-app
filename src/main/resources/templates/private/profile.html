@@ -14,7 +14,7 @@
             <h1>Willkommen zurück!</h1>
             <p>
                 Hallo <span sec:authentication="name">Bob</span>,<br/>
-                deine aktuellen Rollen: <span sec:authentication="principal.authorities">[ROLE_USER, ROLE_ADMIN]</span>
+                dein aktueller Kredit: <span th:text="${player.getCredit()}">NONE</span>
             </p>
         </div>
     </div>

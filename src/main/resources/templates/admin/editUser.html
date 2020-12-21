@@ -11,13 +11,21 @@
     <div class="row">
         <div class="col">
             <h1>Edit <span th:text="${player.getName()}"></span></h1>
+            <small>Aktueller Kredit: <span th:text="${player.getCredit()}"></span></small>
         </div>
     </div>
 
-    <div class="row" th:if="!{!player.isAdmin()}">
+    <div class="row" th:if="${!player.isAdmin()}">
         <div class="col">
             <p>Promote Admin</p>
+            <a href="#" class="btn btn-danger" th:href="@{'/admin/users/'+${player.getId()}+'/edit/promote'}">Promote</a>
+        </div>
+    </div>
 
+    <div class="row" th:if="${!player.isAdmin()}">
+        <div class="col">
+            <p>Tasting Spendieren</p>
+            <a href="#" class="btn btn-outline-warning" th:href="@{'/admin/users/'+${player.getId()}+'/edit/grant'}">Grant</a>
         </div>
     </div>
 
