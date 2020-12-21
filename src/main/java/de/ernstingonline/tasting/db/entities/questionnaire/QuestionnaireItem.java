@@ -21,10 +21,21 @@ public class QuestionnaireItem {
     @OneToMany(mappedBy = "questionnaireItem")
     private Set<QuestionnaireAnswer> answers;
 
+    @Enumerated(EnumType.ORDINAL)
+    private QuestionType type;
+
     public Long getId() {return id;}
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public QuestionType getType() {
+        return type;
+    }
+
+    public void setType(QuestionType type) {
+        this.type = type;
     }
 
     public void setQuestion(String question) {

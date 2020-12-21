@@ -92,3 +92,11 @@ body {
 .additional-spacing {
     margin-top: 2rem;
 }
+
+.custom-background {
+    background-color: #272932;
+}
+
+body {
+    background-color: #e7ecef;
+}

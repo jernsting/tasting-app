@@ -28,9 +28,15 @@ public class Tasting {
     private String title;
     private Date date;
     private String inviteCode;
+
+    /*
     private boolean opened = true;
     private boolean cancelled = false;
     private boolean started = false;
+     */
+
+    @Enumerated(EnumType.ORDINAL)
+    private TastingState state = TastingState.PLANNED;
 
     /**
      * Add a product to the current tasting
@@ -53,31 +59,12 @@ public class Tasting {
         this.title = title;
     }
 
-    @Basic
-    public boolean isCancelled() {
-        return cancelled;
+    public TastingState getState() {
+        return state;
     }
 
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
-
-    @Basic
-    public boolean isOpened() {
-        return opened;
-    }
-
-    public void setOpened(boolean opened) {
-        this.opened = opened;
-    }
-
-    @Basic
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
+    public void setState(TastingState state) {
+        this.state = state;
     }
 
     @Basic

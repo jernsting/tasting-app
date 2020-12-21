@@ -5,6 +5,7 @@ import de.ernstingonline.tasting.db.dao.game.TastingDao;
 import de.ernstingonline.tasting.db.dao.samples.ProductDao;
 import de.ernstingonline.tasting.db.entities.game.Player;
 import de.ernstingonline.tasting.db.entities.game.Tasting;
+import de.ernstingonline.tasting.db.entities.game.TastingState;
 import de.ernstingonline.tasting.db.entities.samples.Product;
 import de.ernstingonline.tasting.exceptions.TastingNotFoundException;
 import de.ernstingonline.tasting.helper.StaticFunctions;
@@ -78,12 +79,7 @@ public class TastingController {
             return "redirect:/tasting/invite";
         }
 
-        if (!tasting.isOpened()) {
-            atts.addFlashAttribute("messages", error_msg);
-            return "redirect:/tasting/invite";
-        }
-
-        if (tasting.isStarted()) {
+        if (!tasting.getState().planned()) {
             atts.addFlashAttribute("messages", error_msg);
             return "redirect:/tasting/invite";
         }
@@ -105,7 +101,11 @@ public class TastingController {
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                tasting.setOpened(!tasting.isOpened());
+                //tasting.setOpened(!tasting.isOpened());
+                if (tasting.getState().closed())
+                    tasting.setState(TastingState.PLANNED);
+                else if (tasting.getState().planned())
+                    tasting.setState(TastingState.CLOSED);
                 tastingDao.save(tasting);
             }
         }
@@ -120,7 +120,8 @@ public class TastingController {
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                tasting.setCancelled(true);
+                //tasting.setCancelled(true);
+                tasting.setState(TastingState.CANCELLED);
                 tastingDao.save(tasting);
             }
         }
@@ -135,7 +136,8 @@ public class TastingController {
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                tasting.setStarted(true);
+                //tasting.setStarted(true);
+                tasting.setState(TastingState.STARTED);
                 tastingDao.save(tasting);
             }
         }
@@ -152,7 +154,7 @@ public class TastingController {
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             Player player = playerDao.findByUsername(principal.getName()).get(0);
-            if (tasting.getPlayers().contains(player) && !tasting.isCancelled()) {
+            if (tasting.getPlayers().contains(player) && !tasting.getState().cancelled()) {
                 Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
@@ -178,8 +180,8 @@ public class TastingController {
             Tasting tasting = optionalTasting.get();
             Player player = playerDao.findByUsername(principal.getName()).get(0);
             if (tasting.getPlayers().contains(player)
-                    && !tasting.isCancelled()
-                    && !tasting.isStarted()) {
+                    && !tasting.getState().cancelled()
+                    && !tasting.getState().started()) {
                 Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
@@ -226,12 +228,8 @@ public class TastingController {
 
         if (result.hasErrors())
             return "tasting/viewTasting";
-        if (tasting.isCancelled()) {
+        if (!tasting.getState().planned()) {
             atts.addFlashAttribute("messages", "Tasting ist abgesagt");
-            return "redirect:/tasting/"+id+"/view";
-        }
-        if (tasting.isStarted()) {
-            atts.addFlashAttribute("messages", "Tasting hat bereits begonnen");
             return "redirect:/tasting/"+id+"/view";
         }
 

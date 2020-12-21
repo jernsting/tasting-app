@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="https://www.thymeleaf.org">
+<head>
+    <!-- meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.3/css/bootstrap.min.css" />
+    <!-- custom styles-->
+    <link rel="stylesheet" href="/assets/ingame.css" />
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Tasting APP</title>
+</head>
+<body>
+
+<section layout:fragment="custom-content">
+    <p>Your page content goes here</p>
+</section>
+
+
+<footer class="footer">
+    <div class="container">
+        <a class="btn btn-outline-danger" href="#" th:href="@{/}">Tasting verlassen</a>
+    </div>
+</footer>
+
+
+<!-- scripts -->
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/popper.js/1.16.0/popper.js"></script>
+<script src="/webjars/bootstrap/4.5.3/js/bootstrap.min.js"></script>
+</body>
+</html>
