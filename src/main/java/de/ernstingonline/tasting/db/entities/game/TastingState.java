@@ -18,4 +18,8 @@ public enum TastingState {
     public boolean closed() {
         return this == CLOSED;
     }
+
+    public boolean acceptingInvites() {
+        return this == PLANNED || this == CLOSED;
+    }
 }

@@ -12,9 +12,9 @@
         <div class="col">
             <h1>Tasting Name: <span th:text="${tasting.getTitle()}"></span></h1>
             <small>Einladungscode:
-                <span th:if="${tasting.getState().planned()}"
+                <span th:if="${tasting.getState().planned() || tasting.getState().closed()}"
                       th:text="${tasting.getId()}+'$'+${tasting.getInviteCode()}"></span>
-                <span th:if="${tasting.getState().closed()}" class="badge badge-warning">Tasting geschlossen</span>
+                <span th:if="${tasting.getState().closed()}" class="badge badge-warning">Tasting vorbereitet</span>
                 <span th:if="${tasting.getState().cancelled()}" class="badge badge-danger">Tasting abgesagt</span>
                 <span th:if="${tasting.getState().started()}" class="badge badge-success">Tasting gestartet</span>
             </small>
@@ -31,7 +31,7 @@
             <div class="card border-warning">
                 <h5 class="card-header">Host-Optionen</h5>
                 <div class="card-body">
-                    <a href="#" th:if="${tasting.getState().planned()}" th:href="@{'/tasting/'+${tasting.getId()}+'/start'}" class="btn btn-outline-success">Tasting starten</a>
+                    <a href="#" th:if="${tasting.getState().acceptingInvites()}" th:href="@{'/tasting/'+${tasting.getId()}+'/start'}" class="btn btn-outline-success">Tasting starten</a>
                     <a href="#" th:if="${tasting.getState().planned()}" th:href="@{'/tasting/'+${tasting.getId()}+'/close'}" class="btn btn-outline-warning">Tasting schließen</a>
                     <a href="#" th:if="${tasting.getState().closed()}" th:href="@{'/tasting/'+${tasting.getId()}+'/close'}" class="btn btn-outline-warning">Tasting öffnen</a>
                     <a href="#" th:if="${!tasting.getState().cancelled()}" th:href="@{'/tasting/'+${tasting.getId()}+'/cancel'}" class="btn btn-outline-danger">Tasting absagen</a>
@@ -84,7 +84,7 @@
                             <td>
                                 <span th:if="${product.isRevealed()}" th:text="${product.getName()}"></span>
                                 <span th:if="${username.equals(product.getPlayer().getUsername()) && product.isRevealed()}" class="badge badge-danger">Freigegeben</span>
-                                <span th:if="${username.equals(product.getPlayer().getUsername()) && !product.isRevealed()}"
+                                <span th:if="${username.equals(product.getPlayer().getUsername()) && tasting.getState().planned()}"
                                       th:text="${product.getName()}"></span>
                             </td>
                             <td th:if="${!tasting.getState().cancelled()}">

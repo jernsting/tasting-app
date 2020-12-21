@@ -76,7 +76,7 @@ public class TastingController {
             return "redirect:/tasting/invite";
         }
 
-        if (!tasting.getState().planned()) {
+        if (!tasting.getState().acceptingInvites()) {
             atts.addFlashAttribute("messages", error_msg);
             return "redirect:/tasting/invite";
         }
@@ -99,9 +99,7 @@ public class TastingController {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
                 //tasting.setOpened(!tasting.isOpened());
-                if (tasting.getState().closed())
-                    tasting.setState(TastingState.PLANNED);
-                else if (tasting.getState().planned())
+                if (tasting.getState().planned())
                     tasting.setState(TastingState.CLOSED);
                 tastingDao.save(tasting);
             }
