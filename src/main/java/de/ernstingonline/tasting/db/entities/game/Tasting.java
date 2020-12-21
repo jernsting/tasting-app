@@ -22,9 +22,15 @@ public class Tasting {
     @OneToMany()
     private Set<Product> products = new HashSet<>();
 
+    @ManyToOne()
+    private Player host;
+
     private String title;
     private Date date;
     private String inviteCode;
+    private boolean opened = true;
+    private boolean cancelled = false;
+    private boolean started = false;
 
     /**
      * Add a product to the current tasting
@@ -45,6 +51,33 @@ public class Tasting {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Basic
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    @Basic
+    public boolean isOpened() {
+        return opened;
+    }
+
+    public void setOpened(boolean opened) {
+        this.opened = opened;
+    }
+
+    @Basic
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     @Basic
@@ -83,5 +116,13 @@ public class Tasting {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    public Player getHost() {
+        return host;
+    }
+
+    public void setHost(Player host) {
+        this.host = host;
     }
 }

@@ -55,7 +55,9 @@
                     <td></td>
                 </tr>
                 <tr th:each="tasting : ${upcoming}">
-                    <td><a th:href="@{'/tasting/'+${tasting.getId()}+'/view'}"><span th:text="${tasting.getTitle()}"> Title </span></a></td>
+                    <td><a th:href="@{'/tasting/'+${tasting.getId()}+'/view'}"><span th:text="${tasting.getTitle()}"> Title </span></a>
+                    <span th:if="${tasting.isCancelled()}" class="badge badge-danger">Abgesagt</span>
+                    </td>
                     <td><span th:text="${tasting.getDate().toLocaleString()}"></span></td>
                 </tr>
                 </tbody>

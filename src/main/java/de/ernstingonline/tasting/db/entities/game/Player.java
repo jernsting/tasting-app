@@ -23,6 +23,9 @@ public class Player implements UserDetails {
     @OneToMany(mappedBy = "player")
     private Set<Product> products = new HashSet<>();
 
+    @OneToMany(mappedBy = "host")
+    private Set<Tasting> hostedTastings = new HashSet<>();
+
     // Todo: password etc
     private String name;
     private Integer credit = 0;
@@ -39,6 +42,14 @@ public class Player implements UserDetails {
     @Basic
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public Set<Tasting> getHostedTastings() {
+        return hostedTastings;
+    }
+
+    public void setHostedTastings(Set<Tasting> hostedTastings) {
+        this.hostedTastings = hostedTastings;
     }
 
     /**
@@ -66,6 +77,15 @@ public class Player implements UserDetails {
             players.add(this);
             tasting.setPlayers(players);
         }
+    }
+
+    public void addHostedTasting(Tasting tasting) {
+        addTasting(tasting);
+        if (tasting.getHost() == null || tasting.getHost() == this){
+            tasting.setHost(this);
+            this.hostedTastings.add(tasting);
+        }
+
     }
 
     /**

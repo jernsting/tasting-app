@@ -4,6 +4,7 @@ import de.ernstingonline.tasting.validators.customValidations.PasswordMatcher;
 import de.ernstingonline.tasting.validators.customValidations.UsernameTaken;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @PasswordMatcher()
 @UsernameTaken()
@@ -33,6 +34,7 @@ public class PlayerValidator {
     }
 
     @NotEmpty(message = "Passwort darf nicht leer sein")
+    @Size(min = 6, message = "Passwort muss aus mindestens 6 Zeichen bestehen")
     public String getPassword() {
         return password;
     }
@@ -42,6 +44,7 @@ public class PlayerValidator {
     }
 
     @NotEmpty(message = "Username darf nicht leer sein.")
+    @Size(min = 3, message = "Nutzername muss aus mindestens drei Zeichen bestehen")
     public String getUsername() {
         return username;
     }
