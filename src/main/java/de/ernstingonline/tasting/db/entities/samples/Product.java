@@ -21,6 +21,7 @@ public class Product {
 
     private String name;
     private boolean revealed;
+    private Long playOrder;
 
     @Basic
     public String getName() {
@@ -29,6 +30,15 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Basic
+    public Long getPlayOrder() {
+        return playOrder;
+    }
+
+    public void setPlayOrder(Long playOrder) {
+        this.playOrder = playOrder;
     }
 
     @Basic

@@ -28,12 +28,7 @@ public class Tasting {
     private String title;
     private Date date;
     private String inviteCode;
-
-    /*
-    private boolean opened = true;
-    private boolean cancelled = false;
-    private boolean started = false;
-     */
+    private int step = 0;
 
     @Enumerated(EnumType.ORDINAL)
     private TastingState state = TastingState.PLANNED;
@@ -48,6 +43,15 @@ public class Tasting {
             throw new IllegalArgumentException("Product already taken");
         product.setTasting(this);
         this.products.add(product);
+    }
+
+    @Basic
+    public int getStep() {
+        return step;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
     }
 
     @Basic

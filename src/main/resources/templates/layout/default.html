@@ -42,7 +42,7 @@
                             <a class="dropdown-item" href="#" th:href="@{/admin/index}">Dashboard</a>
                         </div>
                     </li>
-                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()" th:if="${false}">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Fragebögen</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown03">
                             <a class="dropdown-item" href="#" th:href="@{/question/}">Liste</a>

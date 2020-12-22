@@ -26,9 +26,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/tasting")
@@ -90,6 +88,32 @@ public class TastingController {
         return "redirect:/tasting/"+parts[0]+"/view";
     }
 
+    @RequestMapping(value = "{tasting_id}/leave")
+    public String leaveTasting(@PathVariable("tasting_id") String tasting_id,
+                               Principal principal,
+                               RedirectAttributes atts) {
+        Player player = playerDao.findByUsername(principal.getName()).get(0);
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        if (optionalTasting.isPresent()) {
+            Tasting tasting = optionalTasting.get();
+            if (tasting.getHost() == player) {
+                atts.addFlashAttribute("messages", "Als Host können Sie das Tasting nicht verlassen.");
+                return "redirect:/tasting/"+tasting_id+"/view";
+            }
+            Set<Player> players = tasting.getPlayers();
+            players.remove(player);
+            tasting.setPlayers(players);
+            Set<Tasting> tastings = player.getTastings();
+            tastings.remove(tasting);
+            player.setTastings(tastings);
+
+            playerDao.save(player);
+            tastingDao.save(tasting);
+        }
+
+        return "redirect:/";
+    }
+
     @RequestMapping(value = "/{tasting_id}/close")
     public String closeTasting(@PathVariable("tasting_id") String tasting_id,
                                Principal principal) {
@@ -102,6 +126,13 @@ public class TastingController {
                 if (tasting.getState().planned())
                     tasting.setState(TastingState.CLOSED);
                 tastingDao.save(tasting);
+                List<Product> products = new ArrayList<>(tasting.getProducts());
+                Collections.shuffle(products);
+                for (int i=0; i<products.size(); i++) {
+                    Product product = products.get(i);
+                    product.setPlayOrder((long)i);
+                    productDao.save(product);
+                }
             }
         }
         return "redirect:/tasting/"+tasting_id+"/view";
@@ -125,15 +156,33 @@ public class TastingController {
 
     @RequestMapping(value = "/{tasting_id}/start")
     public String startTasting(@PathVariable("tasting_id") String tasting_id,
-                                Principal principal) {
+                               Principal principal,
+                               RedirectAttributes atts) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
         Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
-            if (tasting.getHost() == player) {
+            if (tasting.getHost() == player && tasting.getState().closed()) {
                 //tasting.setStarted(true);
-                tasting.setState(TastingState.STARTED);
-                tastingDao.save(tasting);
+                List<Player> blockingPlayers = new ArrayList<>();
+                for (Player coplayer : tasting.getPlayers()) {
+                    boolean blocking = false;
+                    for (Tasting coplayergame : coplayer.getTastings())
+                        if (coplayergame.getState().started()) {
+                            blocking = true;
+                            break;
+                        }
+                    if (blocking)
+                        blockingPlayers.add(coplayer);
+                }
+                if (blockingPlayers.isEmpty()) {
+                    tasting.setState(TastingState.STARTED);
+                    tastingDao.save(tasting);
+                } else {
+                    atts.addFlashAttribute("messages", "Einige Teilnehmer nehmen aktuell an gestarteten Tastings teil, daher kann dieses Tasting nicht gestartet werden.");
+                }
+            } else if (tasting.getHost() == player && !tasting.getState().closed()) {
+                atts.addFlashAttribute("messages", "Tasting muss vor dem Start geschlossen werden");
             }
         }
         return "redirect:/tasting/"+tasting_id+"/view";
@@ -142,20 +191,21 @@ public class TastingController {
     @RequestMapping(value = "/{tasting_id}/reveal/{product_id}")
     public String revealProduct(@PathVariable("tasting_id") String tasting_id,
                                 @PathVariable("product_id") String product_id,
-                                Principal principal,
-                                Model model) {
+                                Principal principal) {
 
         Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             Player player = playerDao.findByUsername(principal.getName()).get(0);
-            if (tasting.getPlayers().contains(player) && !tasting.getState().cancelled()) {
+            if (tasting.getPlayers().contains(player) && tasting.getState().started()) {
                 Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
-                    if (product.getPlayer() == player) {
+                    if (product.getPlayer() == player && tasting.getStep() == product.getPlayOrder()) {
                         product.setRevealed(!product.isRevealed());
                         productDao.save(product);
+                        tasting.setStep(tasting.getStep() + 1);
+                        tastingDao.save(tasting);
                     }
                 }
             }
@@ -167,8 +217,7 @@ public class TastingController {
     @RequestMapping(value = "/{tasting_id}/delete/{product_id}")
     public String deleteProduct(@PathVariable("tasting_id") String tasting_id,
                                 @PathVariable("product_id") String product_id,
-                                Principal principal,
-                                Model model) {
+                                Principal principal) {
 
         Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
         if (optionalTasting.isPresent()) {
