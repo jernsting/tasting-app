@@ -7,6 +7,7 @@ import de.ernstingonline.tasting.db.entities.game.Player;
 import de.ernstingonline.tasting.db.entities.game.Tasting;
 import de.ernstingonline.tasting.db.entities.game.TastingState;
 import de.ernstingonline.tasting.db.entities.samples.Product;
+import de.ernstingonline.tasting.exceptions.ProductNotFoundException;
 import de.ernstingonline.tasting.exceptions.TastingNotFoundException;
 import de.ernstingonline.tasting.helper.StaticFunctions;
 import de.ernstingonline.tasting.validators.InviteValidator;
@@ -186,6 +187,32 @@ public class TastingController {
             }
         }
         return "redirect:/tasting/"+tasting_id+"/view";
+    }
+
+    @RequestMapping(value = "/{product_id}/verifystep")
+    public String verifyProduct(@PathVariable("product_id") String product_id,
+                                Model model,
+                                Principal principal) {
+        Player player = playerDao.findByUsername(principal.getName()).get(0);
+        Tasting activeTasting = null;
+        for (Tasting tasting : player.getTastings())
+            if (tasting.getState().started()) {
+                activeTasting = tasting;
+                break;
+            }
+        if (activeTasting == null)
+            throw new  TastingNotFoundException();
+
+        Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
+        if (!optionalProduct.isPresent())
+            throw new ProductNotFoundException();
+
+        boolean right_product = false;
+        if (activeTasting.getStep() == optionalProduct.get().getPlayOrder())
+            right_product = true;
+
+        model.addAttribute("right_product", right_product);
+        return "tasting/verifyStep";
     }
 
     @RequestMapping(value = "/{tasting_id}/reveal/{product_id}")

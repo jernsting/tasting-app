@@ -51,7 +51,7 @@ public class QRController {
             URI uri = builder
                     .replacePath(null)
                     .replaceQuery(null)
-                    .pathSegment("view", product.getId().toString(), "verify")
+                    .pathSegment("tasting", product.getId().toString(), "verifystep")
                     .build().toUri();
             response = new ResponseEntity<>(StaticFunctions.generateQRCodeImage(uri.toString()),
                     HttpStatus.OK);
