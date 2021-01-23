@@ -82,9 +82,9 @@
                         <thead>
                         <tr>
                             <th scope="col">QR-Code</th>
-                            <th scope="col">Kennung</th>
                             <th scope="col">Name</th>
                             <th scope="col">Optionen</th>
+                            <th scope="col">Beitragender</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -102,7 +102,6 @@
                                     Codes nur für den Beitragenden sichtbar</span>
                                 <span th:if="${!tasting.getState().planned()}">Codes nur während der Planung sichtbar</span>
                             </td>
-                            <td><span th:text="${product.getId()}"> Title </span></td>
                             <td>
                                 <span th:if="${product.isRevealed()}" th:text="${product.getName()}"></span>
                                 <span th:if="${username.equals(product.getPlayer().getUsername()) && tasting.getState().planned()}"
@@ -112,7 +111,7 @@
                                 <span th:switch="${product.isRevealed()}">
                                     <span th:case="false">
                                         <a th:if="${tasting.getState().started
-                                        && username.equals(product.getPlayer().getUsername())
+                                        && username.equals(tasting.getHost().getUsername())
                                         && product.getPlayOrder() == tasting.getStep()}"
                                            href="#"
                                            th:href="@{'/tasting/'+${tasting.getId()}+'/reveal/'+${product.getId()}}"
@@ -126,6 +125,12 @@
                                 </span>
                             </td>
                             <td th:if="${tasting.getState().cancelled()}"></td>
+                            <td th:if="${product.isRevealed() && tasting.getState().cancelled()}">
+                                <span th:text="${product.getPlayer().getName()}"></span>
+                            </td>
+                            <td th:if="${!product.isRevealed()}">
+                                *****
+                            </td>
                         </tr>
                         </tbody>
                     </table>

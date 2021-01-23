@@ -228,7 +228,7 @@ public class TastingController {
                 Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
-                    if (product.getPlayer() == player && tasting.getStep() == product.getPlayOrder()) {
+                    if (tasting.getHost() == player && tasting.getStep() == product.getPlayOrder()) {
                         product.setRevealed(!product.isRevealed());
                         productDao.save(product);
                         tasting.setStep(tasting.getStep() + 1);
