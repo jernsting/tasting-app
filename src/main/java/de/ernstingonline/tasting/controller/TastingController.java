@@ -212,6 +212,7 @@ public class TastingController {
             right_product = true;
 
         model.addAttribute("right_product", right_product);
+        model.addAttribute("step", optionalProduct.get().getPlayOrder()+1);
         return "tasting/verifyStep";
     }
 

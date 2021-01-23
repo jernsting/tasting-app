@@ -10,7 +10,8 @@
 <section layout:fragment="custom-content">
     <h1 th:switch="${right_product}">
         <span th:case="${true}" ><span class="glyphicon glyphicon-ok"></span> Dies ist die richtige Probe!</span>
-        <span th:case="${false}"><span class="glyphicon glyphicon-remove"></span> Falsche Probe.</span>
+        <span th:case="${false}"><span class="glyphicon glyphicon-remove"></span> Falsche Probe.
+            <br>Dies ist die <span th:text="step"></span>te Probe</span>
     </h1>
 </section>
 </body>
