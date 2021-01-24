@@ -11,13 +11,61 @@
 <section layout:fragment="custom-content">
     <div class="row">
         <div class="col">
-            <h1>Willkommen zurück!</h1>
+            <div class="alert alert-success" th:each="success : ${successes}">
+                <span th:text="${success}" class="ui error message"> </span>
+            </div>
+            <h1>Willkommen zurück, <span th:text="${player.getName()}">Bob</span>!</h1>
             <p>
-                Hallo <span sec:authentication="name">Bob</span>,<br/>
-                dein aktueller Kredit: <span th:text="${player.getCredit()}">NONE</span>
+                Dein aktueller Kredit: <span th:text="${player.getCredit()}">NONE</span>
             </p>
         </div>
     </div>
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Anzeigenamen ändern</h5>
+                <div class="card-body">
+                    <form th:action="@{'/profile/update/displayname'}" method="post">
+                        <div class="form-group">
+                            <label for="displayname">Anzeigename</label>
+                            <input id="displayname" th:value="${player.getName()}" class="form-control"
+                                   type="text" name="name"/>
+                        </div>
+                        <div><input type="submit" class="btn btn-primary" value="Anzeigenamen aktualisieren"/></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row additional-spacing">
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">Passwort ändern</h5>
+                <div class="card-body">
+                    <form th:action="@{'/profile/update/password'}" method="post" th:object="${passwordObj}">
+                        <div class="alert alert-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                            Passwörter stimmen nicht überein
+                        </div>
+                        <div class="alert alert-danger" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}">
+                            Passwörter stimmen nicht überein
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Passwort</label>
+                            <input class="form-control" th:field="*{password}" id="password" type="password" name="password"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password2">Password wiederholen</label>
+                            <input class="form-control" id="password2" th:field="*{password2}" type="password" name="password2"/>
+                        </div>
+                        <div><input type="submit" class="btn btn-primary" value="Passwort ändern"/></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 </body>
 </html>

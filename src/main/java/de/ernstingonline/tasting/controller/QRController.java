@@ -48,12 +48,13 @@ public class QRController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         try {
-            URI uri = builder
+            /*URI uri = builder
                     .replacePath(null)
                     .replaceQuery(null)
                     .pathSegment("tasting", product.getId().toString(), "verifystep")
-                    .build().toUri();
-            response = new ResponseEntity<>(StaticFunctions.generateQRCodeImage(uri.toString()),
+                    .build().toUri();*/
+            String uri = "https://tasting.ernsting-online.de/tasting/"+ product.getId().toString() + "/verifystep";
+            response = new ResponseEntity<>(StaticFunctions.generateQRCodeImage(uri),
                     HttpStatus.OK);
         } catch (Exception e) {
             response = new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);

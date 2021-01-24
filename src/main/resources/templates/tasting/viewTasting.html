@@ -107,7 +107,7 @@
                                 <span th:if="${username.equals(product.getPlayer().getUsername()) && tasting.getState().planned()}"
                                       th:text="${product.getName()}"></span>
                             </td>
-                            <td th:if="${!tasting.getState().cancelled()}">
+                             <td th:if="${!tasting.getState().cancelled()}">
                                 <span th:switch="${product.isRevealed()}">
                                     <span th:case="false">
                                         <a th:if="${tasting.getState().started
@@ -131,6 +131,7 @@
                             <td th:if="${!product.isRevealed()}">
                                 *****
                             </td>
+                            <td th:if="${product.isRevealed() && !tasting.getState().cancelled()}"></td>
                         </tr>
                         </tbody>
                     </table>
