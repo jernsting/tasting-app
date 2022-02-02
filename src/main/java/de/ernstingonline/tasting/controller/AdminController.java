@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -29,7 +30,11 @@ public class AdminController {
     @Autowired
     private QuestionnaireDao questionnaireDao;
 
-    @RequestMapping("/index")
+    private final String userNotFound = "User nicht gefunden";
+    private final String msg = "messages";
+    private final String toAdmin = "redirect:/admin/index";
+
+    @GetMapping("/index")
     public String index(Model model) {
         model.addAttribute("playerCount", playerDao.count());
         model.addAttribute("tastingCount", tastingDao.count());
@@ -39,14 +44,14 @@ public class AdminController {
         return "admin/index";
     }
 
-    @RequestMapping("/users/{id}/edit")
+    @GetMapping("/users/{id}/edit")
     public String editUsers(@PathVariable("id") String id,
                             RedirectAttributes attrs,
                             Model model) {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
         if (!optionalPlayer.isPresent()) {
-            attrs.addFlashAttribute("messages", "User nicht gefunden");
-            return "redirect:/admin/index";
+            attrs.addFlashAttribute(msg, userNotFound);
+            return toAdmin;
         }
 
         Player player = optionalPlayer.get();
@@ -54,14 +59,14 @@ public class AdminController {
         return "admin/editUser";
     }
 
-    @RequestMapping("/users/{id}/edit/promote")
+    @GetMapping("/users/{id}/edit/promote")
     public String promoteUser(@PathVariable("id") String id,
                               RedirectAttributes atts) {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
 
         if (!optionalPlayer.isPresent()) {
-            atts.addFlashAttribute("messages", "User nicht gefunden");
-            return "redirect:/admin/index";
+            atts.addFlashAttribute(msg, userNotFound);
+            return toAdmin;
         }
 
         Player player = optionalPlayer.get();
@@ -71,14 +76,14 @@ public class AdminController {
         return "redirect:/admin/users/"+id+"/edit";
     }
 
-    @RequestMapping("/users/{id}/edit/grant")
+    @GetMapping("/users/{id}/edit/grant")
     public String grantUser(@PathVariable("id") String id,
                             RedirectAttributes atts) {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
 
         if (!optionalPlayer.isPresent()) {
-            atts.addFlashAttribute("messages", "User nicht gefunden");
-            return "redirect:/admin/index";
+            atts.addFlashAttribute(msg, userNotFound);
+            return toAdmin;
         }
 
         Player player = optionalPlayer.get();

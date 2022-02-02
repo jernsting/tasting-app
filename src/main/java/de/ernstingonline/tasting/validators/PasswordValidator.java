@@ -1,6 +1,6 @@
 package de.ernstingonline.tasting.validators;
 
-import de.ernstingonline.tasting.validators.customValidations.PasswordMatcher;
+import de.ernstingonline.tasting.validators.customvalidations.PasswordMatcher;
 
 @PasswordMatcher
 public class PasswordValidator extends PasswordChanger {

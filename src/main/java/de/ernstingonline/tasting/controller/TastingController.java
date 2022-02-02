@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -40,13 +37,19 @@ public class TastingController {
     @Autowired
     private ProductDao productDao;
 
-    @RequestMapping(value = "/invite", method = RequestMethod.GET)
+    private final String msg = "messages";
+    private final String toInvite = "redirect:/tasting/invite";
+    private final String viewPage = "/view";
+    private final String toTasting = "redirect:/tasting/";
+    private final String tastingAttr = "tasting";
+
+    @GetMapping(value = "/invite")
     public String processInvite(Model model) {
         model.addAttribute("invite", new InviteValidator());
         return "tasting/tastingInvite";
     }
 
-    @RequestMapping(value = "/invite", method = RequestMethod.POST)
+    @PostMapping(value = "/invite")
     public String acceptInvite(@Valid @ModelAttribute("invite") InviteValidator invite,
                                BindingResult result,
                                RedirectAttributes atts,
@@ -55,29 +58,29 @@ public class TastingController {
             return "tasting/tastingInvite";
 
         String[] parts = invite.getInvite().split("\\$");
-        String error_msg = "Ungültiger Einladungscode";
+        String errorMsg = "Ungültiger Einladungscode";
 
         Optional<Tasting> optionalTasting;
         try {
              optionalTasting = tastingDao.findById(Long.parseLong(parts[0]));
         } catch (Exception e) {
-            atts.addFlashAttribute("messages", error_msg);
-            return "redirect:/tasting/invite";
+            atts.addFlashAttribute(msg, errorMsg);
+            return toInvite;
         }
         if (!optionalTasting.isPresent()) {
-            atts.addFlashAttribute("messages", error_msg);
-            return "redirect:/tasting/invite";
+            atts.addFlashAttribute(msg, errorMsg);
+            return toInvite;
         }
 
         Tasting tasting = optionalTasting.get();
         if (!tasting.getInviteCode().equals(parts[1])) {
-            atts.addFlashAttribute("messages", error_msg);
-            return "redirect:/tasting/invite";
+            atts.addFlashAttribute(msg, errorMsg);
+            return toInvite;
         }
 
         if (!tasting.getState().acceptingInvites()) {
-            atts.addFlashAttribute("messages", error_msg);
-            return "redirect:/tasting/invite";
+            atts.addFlashAttribute(msg, errorMsg);
+            return toInvite;
         }
 
         Player player = playerDao.findByUsername(principal.getName()).get(0);
@@ -86,25 +89,25 @@ public class TastingController {
         tastingDao.save(tasting);
         playerDao.save(player);
 
-        return "redirect:/tasting/"+parts[0]+"/view";
+        return toTasting+parts[0]+viewPage;
     }
 
-    @RequestMapping(value = "{tasting_id}/leave")
-    public String leaveTasting(@PathVariable("tasting_id") String tasting_id,
+    @GetMapping(value = "{tastingId}/leave")
+    public String leaveTasting(@PathVariable("tastingId") String tastingId,
                                Principal principal,
                                RedirectAttributes atts) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                atts.addFlashAttribute("messages", "Als Host können Sie das Tasting nicht verlassen.");
-                return "redirect:/tasting/"+tasting_id+"/view";
+                atts.addFlashAttribute(msg, "Als Host können Sie das Tasting nicht verlassen.");
+                return toTasting+tastingId+viewPage;
             }
             Set<Player> players = tasting.getPlayers();
             players.remove(player);
             tasting.setPlayers(players);
-            Set<Tasting> tastings = player.getTastings();
+            HashSet<Tasting> tastings = player.getTastings();
             tastings.remove(tasting);
             player.setTastings(tastings);
 
@@ -115,15 +118,14 @@ public class TastingController {
         return "redirect:/";
     }
 
-    @RequestMapping(value = "/{tasting_id}/close")
-    public String closeTasting(@PathVariable("tasting_id") String tasting_id,
+    @GetMapping(value = "/{tastingId}/close")
+    public String closeTasting(@PathVariable("tastingId") String tastingId,
                                Principal principal) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                //tasting.setOpened(!tasting.isOpened());
                 if (tasting.getState().planned())
                     tasting.setState(TastingState.CLOSED);
                 tastingDao.save(tasting);
@@ -136,60 +138,55 @@ public class TastingController {
                 }
             }
         }
-        return "redirect:/tasting/"+tasting_id+"/view";
+        return toTasting+tastingId+viewPage;
     }
 
-    @RequestMapping(value = "/{tasting_id}/cancel")
-    public String cancelTasting(@PathVariable("tasting_id") String tasting_id,
+    @GetMapping(value = "/{tastingId}/cancel")
+    public String cancelTasting(@PathVariable("tastingId") String tastingId,
                                Principal principal) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                //tasting.setCancelled(true);
                 tasting.setState(TastingState.CANCELLED);
                 tastingDao.save(tasting);
             }
         }
-        return "redirect:/tasting/"+tasting_id+"/view";
+        return toTasting+tastingId+viewPage;
     }
 
-    @RequestMapping(value = "/{tasting_id}/start")
-    public String startTasting(@PathVariable("tasting_id") String tasting_id,
+    @GetMapping(value = "/{tastingId}/start")
+    public String startTasting(@PathVariable("tastingId") String tastingId,
                                Principal principal,
                                RedirectAttributes atts) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
-        if (optionalTasting.isPresent()) {
-            Tasting tasting = optionalTasting.get();
-            if (tasting.getHost() == player && tasting.getState().closed()) {
-                //tasting.setStarted(true);
-                List<Player> blockingPlayers = new ArrayList<>();
-                for (Player coplayer : tasting.getPlayers()) {
-                    boolean blocking = false;
-                    for (Tasting coplayergame : coplayer.getTastings())
-                        if (coplayergame.getState().started()) {
-                            blocking = true;
-                            break;
-                        }
-                    if (blocking)
-                        blockingPlayers.add(coplayer);
-                }
-                if (blockingPlayers.isEmpty()) {
-                    tasting.setState(TastingState.STARTED);
-                    tastingDao.save(tasting);
-                } else {
-                    atts.addFlashAttribute("messages", "Einige Teilnehmer nehmen aktuell an gestarteten Tastings teil, daher kann dieses Tasting nicht gestartet werden.");
-                }
-            } else if (tasting.getHost() == player && !tasting.getState().closed()) {
-                atts.addFlashAttribute("messages", "Tasting muss vor dem Start geschlossen werden");
-            }
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
+        if (optionalTasting.isEmpty()) {
+            return toTasting+tastingId+viewPage;
         }
-        return "redirect:/tasting/"+tasting_id+"/view";
+        Tasting tasting = optionalTasting.get();
+
+        if (tasting.getHost() != player) {
+            return toTasting+tastingId+viewPage;
+        }
+
+        if (tasting.getHost() == player && !tasting.getState().closed()) {
+            atts.addFlashAttribute(msg, "Tasting muss vor dem Start geschlossen werden");
+            return toTasting+tastingId+viewPage;
+        }
+
+        List blockingPlayers = this.getBlockingPlayers(tasting, player);
+        if (blockingPlayers.isEmpty()) {
+            tasting.setState(TastingState.STARTED);
+            tastingDao.save(tasting);
+        } else {
+            atts.addFlashAttribute(msg, "Einige Teilnehmer nehmen aktuell an gestarteten Tastings teil, daher kann dieses Tasting nicht gestartet werden.");
+        }
+        return toTasting+tastingId+viewPage;
     }
 
-    @RequestMapping(value = "/{product_id}/verifystep")
+    @GetMapping(value = "/{product_id}/verifystep")
     public String verifyProduct(@PathVariable("product_id") String product_id,
                                 Model model,
                                 Principal principal) {
@@ -207,26 +204,26 @@ public class TastingController {
         if (!optionalProduct.isPresent())
             throw new ProductNotFoundException();
 
-        boolean right_product = false;
+        boolean rightProduct = false;
         if (activeTasting.getStep() == optionalProduct.get().getPlayOrder())
-            right_product = true;
+            rightProduct = true;
 
-        model.addAttribute("right_product", right_product);
+        model.addAttribute("right_product", rightProduct);
         model.addAttribute("step", optionalProduct.get().getPlayOrder()+1);
         return "tasting/verifyStep";
     }
 
-    @RequestMapping(value = "/{tasting_id}/reveal/{product_id}")
-    public String revealProduct(@PathVariable("tasting_id") String tasting_id,
-                                @PathVariable("product_id") String product_id,
+    @GetMapping(value = "/{tastingId}/reveal/{productId}")
+    public String revealProduct(@PathVariable("tastingId") String tastingId,
+                                @PathVariable("productId") String productId,
                                 Principal principal) {
 
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             Player player = playerDao.findByUsername(principal.getName()).get(0);
             if (tasting.getPlayers().contains(player) && tasting.getState().started()) {
-                Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
+                Optional<Product> optionalProduct = productDao.findById(Long.parseLong(productId));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
                     if (tasting.getHost() == player && tasting.getStep() == product.getPlayOrder()) {
@@ -239,22 +236,22 @@ public class TastingController {
             }
         }
 
-        return "redirect:/tasting/"+tasting_id+"/view";
+        return toTasting+tastingId+viewPage;
     }
 
-    @RequestMapping(value = "/{tasting_id}/delete/{product_id}")
-    public String deleteProduct(@PathVariable("tasting_id") String tasting_id,
-                                @PathVariable("product_id") String product_id,
+    @GetMapping(value = "/{tastingId}/delete/{productId}")
+    public String deleteProduct(@PathVariable("tastingId") String tastingId,
+                                @PathVariable("productId") String productId,
                                 Principal principal) {
 
-        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tasting_id));
+        Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             Player player = playerDao.findByUsername(principal.getName()).get(0);
             if (tasting.getPlayers().contains(player)
                     && !tasting.getState().cancelled()
                     && !tasting.getState().started()) {
-                Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
+                Optional<Product> optionalProduct = productDao.findById(Long.parseLong(productId));
                 if (optionalProduct.isPresent()) {
                     Product product = optionalProduct.get();
                     if (product.getPlayer() == player) {
@@ -270,22 +267,22 @@ public class TastingController {
             }
         }
 
-        return "redirect:/tasting/"+tasting_id+"/view";
+        return toTasting+tastingId+viewPage;
     }
 
-    @RequestMapping(value = "/{id}/view", method = RequestMethod.GET)
+    @GetMapping(value = "/{id}/view")
     public String viewTasting(@PathVariable("id") String id,
                               Principal principal,
                               Model model) {
         Tasting tasting = saveGetTasting(principal, id);
 
-        model.addAttribute("tasting", tasting);
+        model.addAttribute(tastingAttr, tasting);
         model.addAttribute("username", principal.getName());
         model.addAttribute("product", new ProductValidator());
         return "tasting/viewTasting";
     }
 
-    @RequestMapping(value = "/{id}/view", method = RequestMethod.POST)
+    @PostMapping(value = "/{id}/view")
     public String addProduct(@PathVariable("id") String id,
                              Principal principal,
                              @Valid @ModelAttribute("product") ProductValidator product,
@@ -296,13 +293,13 @@ public class TastingController {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
 
         model.addAttribute("username", principal.getName());
-        model.addAttribute("tasting", tasting);
+        model.addAttribute(tastingAttr, tasting);
 
         if (result.hasErrors())
             return "tasting/viewTasting";
         if (!tasting.getState().planned()) {
-            atts.addFlashAttribute("messages", "Tasting ist abgesagt");
-            return "redirect:/tasting/"+id+"/view";
+            atts.addFlashAttribute(msg, "Tasting ist abgesagt");
+            return toTasting+id+viewPage;
         }
 
         Product dbProduct = new Product();
@@ -315,16 +312,16 @@ public class TastingController {
         tastingDao.save(tasting);
         playerDao.save(player);
 
-        return "redirect:/tasting/"+id+"/view";
+        return toTasting+id+viewPage;
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    @GetMapping(value = "/new")
     public String newTasting(Model model) {
-        model.addAttribute("tasting", new TastingValidator());
+        model.addAttribute(tastingAttr, new TastingValidator());
         return "tasting/newTasting";
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    @PostMapping(value = "/new")
     public String saveTasting(@Valid @ModelAttribute("tasting") TastingValidator tasting,
                            BindingResult result,
                            RedirectAttributes atts,
@@ -336,7 +333,7 @@ public class TastingController {
         Player host = playerDao.findByUsername(principal.getName()).get(0);
 
         if (host.getCredit() <= 0 && !host.isAdmin()) {
-            atts.addFlashAttribute("messages", "Kein Guthaben");
+            atts.addFlashAttribute(msg, "Kein Guthaben");
             return "redirect:/";
         }
 
@@ -366,10 +363,10 @@ public class TastingController {
         tastingDao.save(dbTasting);
         playerDao.save(host);
 
-        return "redirect:/tasting/"+dbTasting.getId()+"/view";
+        return toTasting+dbTasting.getId()+viewPage;
     }
 
-    @RequestMapping("/list")
+    @GetMapping("/list")
     public String tastingList(Principal principal, Model model) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
 
@@ -391,5 +388,20 @@ public class TastingController {
             throw new TastingNotFoundException();
 
         return tasting;
+    }
+
+    private List<Player> getBlockingPlayers(Tasting tasting, Player player) {
+        List<Player> blockingPlayers = new ArrayList<>();
+        for (Player coplayer : tasting.getPlayers()) {
+            boolean blocking = false;
+            for (Tasting coplayergame : coplayer.getTastings())
+                if (coplayergame.getState().started()) {
+                    blocking = true;
+                    break;
+                }
+            if (blocking)
+                blockingPlayers.add(coplayer);
+        }
+        return blockingPlayers;
     }
 }

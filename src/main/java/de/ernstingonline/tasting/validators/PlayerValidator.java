@@ -1,7 +1,7 @@
 package de.ernstingonline.tasting.validators;
 
-import de.ernstingonline.tasting.validators.customValidations.PasswordMatcher;
-import de.ernstingonline.tasting.validators.customValidations.UsernameTaken;
+import de.ernstingonline.tasting.validators.customvalidations.PasswordMatcher;
+import de.ernstingonline.tasting.validators.customvalidations.UsernameTaken;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

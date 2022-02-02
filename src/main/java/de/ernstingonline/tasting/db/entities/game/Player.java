@@ -18,15 +18,14 @@ public class Player implements UserDetails {
     private Long id;
 
     @ManyToMany()
-    private Set<Tasting> tastings = new HashSet<>();
+    private HashSet<Tasting> tastings = new HashSet<>();
 
     @OneToMany(mappedBy = "player")
-    private Set<Product> products = new HashSet<>();
+    private HashSet<Product> products = new HashSet<>();
 
     @OneToMany(mappedBy = "host")
-    private Set<Tasting> hostedTastings = new HashSet<>();
+    private HashSet<Tasting> hostedTastings = new HashSet<>();
 
-    // Todo: password etc
     private String name;
     private Integer credit = 0;
     private String password;
@@ -44,11 +43,11 @@ public class Player implements UserDetails {
         return creationDate;
     }
 
-    public Set<Tasting> getHostedTastings() {
+    public HashSet<Tasting> getHostedTastings() {
         return hostedTastings;
     }
 
-    public void setHostedTastings(Set<Tasting> hostedTastings) {
+    public void setHostedTastings(HashSet<Tasting> hostedTastings) {
         this.hostedTastings = hostedTastings;
     }
 
@@ -133,11 +132,11 @@ public class Player implements UserDetails {
      * Return a list of all products that this user has got
      * @return List of products
      */
-    public Set<Product> getProducts() {
+    public HashSet<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(Set<Product> products) {
+    public void setProducts(HashSet<Product> products) {
         this.products = products;
     }
 
@@ -154,11 +153,11 @@ public class Player implements UserDetails {
      * Get a list of tastings, that a user has hosted
      * @return
      */
-    public Set<Tasting> getTastings() {
+    public HashSet<Tasting> getTastings() {
         return tastings;
     }
 
-    public void setTastings(Set<Tasting> tastings) {
+    public void setTastings(HashSet<Tasting> tastings) {
         this.tastings = tastings;
     }
 
@@ -230,7 +229,7 @@ public class Player implements UserDetails {
     @Override
     @Transient
     public boolean isAccountNonLocked() {
-        return locked;
+        return this.getLocked();
     }
 
     @Basic

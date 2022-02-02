@@ -1,10 +1,8 @@
-package de.ernstingonline.tasting.validators.customValidations;
+package de.ernstingonline.tasting.validators.customvalidations;
 
 import de.ernstingonline.tasting.db.dao.game.PlayerDao;
 import de.ernstingonline.tasting.db.entities.game.Player;
 import de.ernstingonline.tasting.validators.PlayerValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintValidator;

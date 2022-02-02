@@ -1,4 +1,4 @@
-package de.ernstingonline.tasting.validators.customValidations;
+package de.ernstingonline.tasting.validators.customvalidations;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,13 +9,13 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Constraint(validatedBy = UsernameTakenValidator.class)
+@Constraint(validatedBy = PasswordMatcherValidator.class)
 @Target({ElementType.TYPE})
 @Retention(RUNTIME)
 @Documented
-public @interface UsernameTaken {
+public @interface PasswordMatcher {
     String message() default
-            "Nutzername bereits vergeben";
+            "Passwörter müssen übereinstimmen";
 
     Class<?>[] groups() default {};
 

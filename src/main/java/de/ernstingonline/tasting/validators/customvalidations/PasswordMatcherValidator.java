@@ -1,4 +1,4 @@
-package de.ernstingonline.tasting.validators.customValidations;
+package de.ernstingonline.tasting.validators.customvalidations;
 
 import de.ernstingonline.tasting.validators.PasswordChanger;
 

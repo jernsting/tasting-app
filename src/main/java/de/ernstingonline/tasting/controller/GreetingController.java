@@ -6,8 +6,6 @@ import de.ernstingonline.tasting.db.entities.game.Player;
 import de.ernstingonline.tasting.db.entities.game.Tasting;
 import de.ernstingonline.tasting.validators.InviteValidator;
 import de.ernstingonline.tasting.validators.PlayerValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,16 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class GreetingController {
@@ -36,31 +29,29 @@ public class GreetingController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
     /**
      * Login controller
      * @return Login site
      */
-    @RequestMapping("/login")
+    @GetMapping("/login")
     public String login() {
         return "public/login";
     }
 
-    @RequestMapping("/team")
+    @GetMapping("/team")
     public String team() { return "public/team"; }
 
-    @RequestMapping("/changelog")
+    @GetMapping("/changelog")
     public String changelog() { return "public/changelog"; }
 
-    @RequestMapping("/tutorial")
+    @GetMapping("/tutorial")
     public String tutorial() { return "public/tutorial"; }
 
     /**
      * Index controller
      * @return Index site
      */
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index(Model model,
                         Principal principal) {
         if (!isAuthenticated()) {
@@ -85,13 +76,13 @@ public class GreetingController {
      * register controller
      * @return Register site
      */
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registration", new PlayerValidator());
         return "public/register";
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping( "/register")
     public String registerSubmit(@Valid @ModelAttribute("registration") PlayerValidator registration,
                                  BindingResult result,
                                  Model model) {

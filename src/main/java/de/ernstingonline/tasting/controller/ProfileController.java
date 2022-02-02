@@ -8,9 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -24,7 +22,7 @@ public class ProfileController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String profile(Principal principal,
                           Model model) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
@@ -34,7 +32,7 @@ public class ProfileController {
         return "private/profile";
     }
 
-    @RequestMapping(value = "/update/displayname", method = RequestMethod.POST)
+    @PostMapping(value = "/update/displayname")
     public String updateUsername(Principal principal,
                                  @ModelAttribute("name") String name,
                                  RedirectAttributes atts) {
@@ -46,7 +44,7 @@ public class ProfileController {
         return "redirect:/profile/";
     }
 
-    @RequestMapping(value = "/update/password", method = RequestMethod.POST)
+    @PostMapping(value = "/update/password")
     public String updatePassword(Principal principal,
                                  RedirectAttributes atts,
                                  Model model,

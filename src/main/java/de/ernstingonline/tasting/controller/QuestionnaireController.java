@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -23,19 +20,19 @@ public class QuestionnaireController {
     @Autowired
     private QuestionnaireDao questionnaireDao;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String listQuestionnaire(Model model) {
         model.addAttribute("questionnairs", questionnaireDao.findAll());
         return "questionnaire/listQuestionnaire";
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.GET)
+    @GetMapping(value = "/new")
     public String newQuestionnaire(Model model) {
         model.addAttribute("questionnaire", new QuestionnaireValidator());
         return "questionnaire/newQuestionnaire";
     }
 
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    @PostMapping(value = "/new")
     public String createQuestionnaire(@Valid @ModelAttribute("questionnaire") QuestionnaireValidator questionnaireValidator,
                                       BindingResult bindingResult) {
         if (bindingResult.hasErrors())
@@ -47,7 +44,7 @@ public class QuestionnaireController {
         return "redirect:/question/";
     }
 
-    @RequestMapping("/{id}/view")
+    @GetMapping("/{id}/view")
     public String viewQuestionnaire(@PathVariable("id") String id,
                                     Model model) {
         Optional<Questionnaire> optionalQuestionnaire = questionnaireDao.findById(Long.parseLong(id));

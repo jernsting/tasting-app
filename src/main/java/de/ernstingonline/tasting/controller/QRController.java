@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
-import java.net.URI;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -48,11 +46,6 @@ public class QRController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         try {
-            /*URI uri = builder
-                    .replacePath(null)
-                    .replaceQuery(null)
-                    .pathSegment("tasting", product.getId().toString(), "verifystep")
-                    .build().toUri();*/
             String uri = "https://tasting.ernsting-online.de/tasting/"+ product.getId().toString() + "/verifystep";
             response = new ResponseEntity<>(StaticFunctions.generateQRCodeImage(uri),
                     HttpStatus.OK);

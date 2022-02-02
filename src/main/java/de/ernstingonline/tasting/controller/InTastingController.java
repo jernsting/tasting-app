@@ -4,22 +4,22 @@ import de.ernstingonline.tasting.db.entities.game.Player;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.util.HtmlUtils;
 
 @Controller
 @RequestMapping("/intasting")
 public class InTastingController {
 
-    @RequestMapping("/{id}/index")
+    @GetMapping("/{id}/index")
     public String tastingIndex(@PathVariable("id") String id) {
         return "intasting/index";
     }
 
     @MessageMapping("hello")
     @SendTo("topic/greetings")
-    public Player greeting(HelloMessage message) throws Exception {
+    public Player greeting(HelloMessage message) throws InterruptedException {
         Thread.sleep(1000); // simulated delay
         Player demo = new Player();
         demo.setName("demo");

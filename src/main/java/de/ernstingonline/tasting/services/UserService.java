@@ -16,8 +16,6 @@ import java.util.List;
 @Service
 public class UserService implements UserDetailsService {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private PlayerDao playerDao;
     @Autowired
