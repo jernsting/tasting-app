@@ -37,11 +37,11 @@ public class TastingController {
     @Autowired
     private ProductDao productDao;
 
-    private final String msg = "messages";
-    private final String toInvite = "redirect:/tasting/invite";
-    private final String viewPage = "/view";
-    private final String toTasting = "redirect:/tasting/";
-    private final String tastingAttr = "tasting";
+    private final static String msg = "messages";
+    private final static String toInvite = "redirect:/tasting/invite";
+    private final static String viewPage = "/view";
+    private final static String toTasting = "redirect:/tasting/";
+    private final static String tastingAttr = "tasting";
 
     @GetMapping(value = "/invite")
     public String processInvite(Model model) {
@@ -176,7 +176,7 @@ public class TastingController {
             return toTasting+tastingId+viewPage;
         }
 
-        List blockingPlayers = this.getBlockingPlayers(tasting, player);
+        List blockingPlayers = this.getBlockingPlayers(tasting);
         if (blockingPlayers.isEmpty()) {
             tasting.setState(TastingState.STARTED);
             tastingDao.save(tasting);
@@ -186,8 +186,8 @@ public class TastingController {
         return toTasting+tastingId+viewPage;
     }
 
-    @GetMapping(value = "/{product_id}/verifystep")
-    public String verifyProduct(@PathVariable("product_id") String product_id,
+    @GetMapping(value = "/{productId}/verifystep")
+    public String verifyProduct(@PathVariable("productId") String productId,
                                 Model model,
                                 Principal principal) {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
@@ -200,7 +200,7 @@ public class TastingController {
         if (activeTasting == null)
             throw new  TastingNotFoundException();
 
-        Optional<Product> optionalProduct = productDao.findById(Long.parseLong(product_id));
+        Optional<Product> optionalProduct = productDao.findById(Long.parseLong(productId));
         if (!optionalProduct.isPresent())
             throw new ProductNotFoundException();
 
@@ -390,7 +390,7 @@ public class TastingController {
         return tasting;
     }
 
-    private List<Player> getBlockingPlayers(Tasting tasting, Player player) {
+    private List<Player> getBlockingPlayers(Tasting tasting) {
         List<Player> blockingPlayers = new ArrayList<>();
         for (Player coplayer : tasting.getPlayers()) {
             boolean blocking = false;

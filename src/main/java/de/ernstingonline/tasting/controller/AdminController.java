@@ -30,9 +30,9 @@ public class AdminController {
     @Autowired
     private QuestionnaireDao questionnaireDao;
 
-    private final String userNotFound = "User nicht gefunden";
-    private final String msg = "messages";
-    private final String toAdmin = "redirect:/admin/index";
+    private final static String userNotFound = "User nicht gefunden";
+    private final static String msg = "messages";
+    private final static String toAdmin = "redirect:/admin/index";
 
     @GetMapping("/index")
     public String index(Model model) {
