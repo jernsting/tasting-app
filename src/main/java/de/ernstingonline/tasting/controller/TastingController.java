@@ -107,7 +107,7 @@ public class TastingController {
             Set<Player> players = tasting.getPlayers();
             players.remove(player);
             tasting.setPlayers(players);
-            HashSet<Tasting> tastings = player.getTastings();
+            Set<Tasting> tastings = player.getTastings();
             tastings.remove(tasting);
             player.setTastings(tastings);
 

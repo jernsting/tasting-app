@@ -18,13 +18,13 @@ public class Player implements UserDetails {
     private Long id;
 
     @ManyToMany()
-    private HashSet<Tasting> tastings = new HashSet<>();
+    private Set<Tasting> tastings = new HashSet<>();
 
     @OneToMany(mappedBy = "player")
-    private HashSet<Product> products = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
 
     @OneToMany(mappedBy = "host")
-    private HashSet<Tasting> hostedTastings = new HashSet<>();
+    private Set<Tasting> hostedTastings = new HashSet<>();
 
     private String name;
     private Integer credit = 0;
@@ -43,11 +43,11 @@ public class Player implements UserDetails {
         return creationDate;
     }
 
-    public HashSet<Tasting> getHostedTastings() {
+    public Set<Tasting> getHostedTastings() {
         return hostedTastings;
     }
 
-    public void setHostedTastings(HashSet<Tasting> hostedTastings) {
+    public void setHostedTastings(Set<Tasting> hostedTastings) {
         this.hostedTastings = hostedTastings;
     }
 
@@ -132,11 +132,11 @@ public class Player implements UserDetails {
      * Return a list of all products that this user has got
      * @return List of products
      */
-    public HashSet<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(HashSet<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 
@@ -153,11 +153,11 @@ public class Player implements UserDetails {
      * Get a list of tastings, that a user has hosted
      * @return
      */
-    public HashSet<Tasting> getTastings() {
+    public Set<Tasting> getTastings() {
         return tastings;
     }
 
-    public void setTastings(HashSet<Tasting> tastings) {
+    public void setTastings(Set<Tasting> tastings) {
         this.tastings = tastings;
     }
 
