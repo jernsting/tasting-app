@@ -37,11 +37,11 @@ public class TastingController {
     @Autowired
     private ProductDao productDao;
 
-    private final static String msg = "messages";
-    private final static String toInvite = "redirect:/tasting/invite";
-    private final static String viewPage = "/view";
-    private final static String toTasting = "redirect:/tasting/";
-    private final static String tastingAttr = "tasting";
+    private static final String MSG = "messages";
+    private static final String TOINVITE = "redirect:/tasting/invite";
+    private static final String VIEWPAGE = "/view";
+    private static final String TOTASTING = "redirect:/tasting/";
+    private static final String TASTINGATTR = "tasting";
 
     @GetMapping(value = "/invite")
     public String processInvite(Model model) {
@@ -64,23 +64,23 @@ public class TastingController {
         try {
              optionalTasting = tastingDao.findById(Long.parseLong(parts[0]));
         } catch (Exception e) {
-            atts.addFlashAttribute(msg, errorMsg);
-            return toInvite;
+            atts.addFlashAttribute(MSG, errorMsg);
+            return TOINVITE;
         }
         if (!optionalTasting.isPresent()) {
-            atts.addFlashAttribute(msg, errorMsg);
-            return toInvite;
+            atts.addFlashAttribute(MSG, errorMsg);
+            return TOINVITE;
         }
 
         Tasting tasting = optionalTasting.get();
         if (!tasting.getInviteCode().equals(parts[1])) {
-            atts.addFlashAttribute(msg, errorMsg);
-            return toInvite;
+            atts.addFlashAttribute(MSG, errorMsg);
+            return TOINVITE;
         }
 
         if (!tasting.getState().acceptingInvites()) {
-            atts.addFlashAttribute(msg, errorMsg);
-            return toInvite;
+            atts.addFlashAttribute(MSG, errorMsg);
+            return TOINVITE;
         }
 
         Player player = playerDao.findByUsername(principal.getName()).get(0);
@@ -89,7 +89,7 @@ public class TastingController {
         tastingDao.save(tasting);
         playerDao.save(player);
 
-        return toTasting+parts[0]+viewPage;
+        return TOTASTING+parts[0]+VIEWPAGE;
     }
 
     @GetMapping(value = "{tastingId}/leave")
@@ -101,8 +101,8 @@ public class TastingController {
         if (optionalTasting.isPresent()) {
             Tasting tasting = optionalTasting.get();
             if (tasting.getHost() == player) {
-                atts.addFlashAttribute(msg, "Als Host können Sie das Tasting nicht verlassen.");
-                return toTasting+tastingId+viewPage;
+                atts.addFlashAttribute(MSG, "Als Host können Sie das Tasting nicht verlassen.");
+                return TOTASTING+tastingId+VIEWPAGE;
             }
             Set<Player> players = tasting.getPlayers();
             players.remove(player);
@@ -138,7 +138,7 @@ public class TastingController {
                 }
             }
         }
-        return toTasting+tastingId+viewPage;
+        return TOTASTING+tastingId+VIEWPAGE;
     }
 
     @GetMapping(value = "/{tastingId}/cancel")
@@ -153,7 +153,7 @@ public class TastingController {
                 tastingDao.save(tasting);
             }
         }
-        return toTasting+tastingId+viewPage;
+        return TOTASTING+tastingId+VIEWPAGE;
     }
 
     @GetMapping(value = "/{tastingId}/start")
@@ -163,17 +163,17 @@ public class TastingController {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
         Optional<Tasting> optionalTasting = tastingDao.findById(Long.parseLong(tastingId));
         if (optionalTasting.isEmpty()) {
-            return toTasting+tastingId+viewPage;
+            return TOTASTING+tastingId+VIEWPAGE;
         }
         Tasting tasting = optionalTasting.get();
 
         if (tasting.getHost() != player) {
-            return toTasting+tastingId+viewPage;
+            return TOTASTING+tastingId+VIEWPAGE;
         }
 
         if (tasting.getHost() == player && !tasting.getState().closed()) {
-            atts.addFlashAttribute(msg, "Tasting muss vor dem Start geschlossen werden");
-            return toTasting+tastingId+viewPage;
+            atts.addFlashAttribute(MSG, "Tasting muss vor dem Start geschlossen werden");
+            return TOTASTING+tastingId+VIEWPAGE;
         }
 
         List blockingPlayers = this.getBlockingPlayers(tasting);
@@ -181,9 +181,9 @@ public class TastingController {
             tasting.setState(TastingState.STARTED);
             tastingDao.save(tasting);
         } else {
-            atts.addFlashAttribute(msg, "Einige Teilnehmer nehmen aktuell an gestarteten Tastings teil, daher kann dieses Tasting nicht gestartet werden.");
+            atts.addFlashAttribute(MSG, "Einige Teilnehmer nehmen aktuell an gestarteten Tastings teil, daher kann dieses Tasting nicht gestartet werden.");
         }
-        return toTasting+tastingId+viewPage;
+        return TOTASTING+tastingId+VIEWPAGE;
     }
 
     @GetMapping(value = "/{productId}/verifystep")
@@ -236,7 +236,7 @@ public class TastingController {
             }
         }
 
-        return toTasting+tastingId+viewPage;
+        return TOTASTING+tastingId+VIEWPAGE;
     }
 
     @GetMapping(value = "/{tastingId}/delete/{productId}")
@@ -267,7 +267,7 @@ public class TastingController {
             }
         }
 
-        return toTasting+tastingId+viewPage;
+        return TOTASTING+tastingId+VIEWPAGE;
     }
 
     @GetMapping(value = "/{id}/view")
@@ -276,7 +276,7 @@ public class TastingController {
                               Model model) {
         Tasting tasting = saveGetTasting(principal, id);
 
-        model.addAttribute(tastingAttr, tasting);
+        model.addAttribute(TASTINGATTR, tasting);
         model.addAttribute("username", principal.getName());
         model.addAttribute("product", new ProductValidator());
         return "tasting/viewTasting";
@@ -293,13 +293,13 @@ public class TastingController {
         Player player = playerDao.findByUsername(principal.getName()).get(0);
 
         model.addAttribute("username", principal.getName());
-        model.addAttribute(tastingAttr, tasting);
+        model.addAttribute(TASTINGATTR, tasting);
 
         if (result.hasErrors())
             return "tasting/viewTasting";
         if (!tasting.getState().planned()) {
-            atts.addFlashAttribute(msg, "Tasting ist abgesagt");
-            return toTasting+id+viewPage;
+            atts.addFlashAttribute(MSG, "Tasting ist abgesagt");
+            return TOTASTING+id+VIEWPAGE;
         }
 
         Product dbProduct = new Product();
@@ -312,12 +312,12 @@ public class TastingController {
         tastingDao.save(tasting);
         playerDao.save(player);
 
-        return toTasting+id+viewPage;
+        return TOTASTING+id+VIEWPAGE;
     }
 
     @GetMapping(value = "/new")
     public String newTasting(Model model) {
-        model.addAttribute(tastingAttr, new TastingValidator());
+        model.addAttribute(TASTINGATTR, new TastingValidator());
         return "tasting/newTasting";
     }
 
@@ -333,7 +333,7 @@ public class TastingController {
         Player host = playerDao.findByUsername(principal.getName()).get(0);
 
         if (host.getCredit() <= 0 && !host.isAdmin()) {
-            atts.addFlashAttribute(msg, "Kein Guthaben");
+            atts.addFlashAttribute(MSG, "Kein Guthaben");
             return "redirect:/";
         }
 
@@ -363,7 +363,7 @@ public class TastingController {
         tastingDao.save(dbTasting);
         playerDao.save(host);
 
-        return toTasting+dbTasting.getId()+viewPage;
+        return TOTASTING+dbTasting.getId()+VIEWPAGE;
     }
 
     @GetMapping("/list")

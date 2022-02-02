@@ -30,9 +30,9 @@ public class AdminController {
     @Autowired
     private QuestionnaireDao questionnaireDao;
 
-    private final static String userNotFound = "User nicht gefunden";
-    private final static String msg = "messages";
-    private final static String toAdmin = "redirect:/admin/index";
+    private static final String USERNOTFOUND = "User nicht gefunden";
+    private static final String MSG = "messages";
+    private static final String TOADMIN = "redirect:/admin/index";
 
     @GetMapping("/index")
     public String index(Model model) {
@@ -50,8 +50,8 @@ public class AdminController {
                             Model model) {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
         if (!optionalPlayer.isPresent()) {
-            attrs.addFlashAttribute(msg, userNotFound);
-            return toAdmin;
+            attrs.addFlashAttribute(MSG, USERNOTFOUND);
+            return TOADMIN;
         }
 
         Player player = optionalPlayer.get();
@@ -65,8 +65,8 @@ public class AdminController {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
 
         if (!optionalPlayer.isPresent()) {
-            atts.addFlashAttribute(msg, userNotFound);
-            return toAdmin;
+            atts.addFlashAttribute(MSG, USERNOTFOUND);
+            return TOADMIN;
         }
 
         Player player = optionalPlayer.get();
@@ -82,8 +82,8 @@ public class AdminController {
         Optional<Player> optionalPlayer = playerDao.findById(Long.parseLong(id));
 
         if (!optionalPlayer.isPresent()) {
-            atts.addFlashAttribute(msg, userNotFound);
-            return toAdmin;
+            atts.addFlashAttribute(MSG, USERNOTFOUND);
+            return TOADMIN;
         }
 
         Player player = optionalPlayer.get();
